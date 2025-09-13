@@ -52,7 +52,7 @@ if uploaded_file:
         "lymph_mcl": "Mantle cell lymphoma",
         "oral_normal": "Healthy oral tissue",
         "oral_scc": "Oral Squamous Cell Carcinoma"
-}
+    }
 
     # Predict
     pred = model.predict(img_array)
