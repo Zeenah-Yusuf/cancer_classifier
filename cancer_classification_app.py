@@ -16,19 +16,6 @@ st.write("Upload an image to predict the cancer type")
 
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
-if uploaded_file:
-    image = Image.open(uploaded_file).resize((128, 128))
-    st.image(image, caption='Uploaded Image', width='stretch')
-
-    # Preprocess
-    img_array = np.array(image) / 255.0
-    img_array = img_array.reshape(1, 128, 128, 3)
-
-    # Predict
-    pred = model.predict(img_array)
-    class_idx = np.argmax(pred)
-    class_name = list(label_map.keys())[list(label_map.values()).index(class_idx)]
-
 # Get human-readable description
 label_descriptions = {
     "all_benign": "Benign blood cells (non-cancerous)",
@@ -58,7 +45,20 @@ label_descriptions = {
     "oral_normal": "Healthy oral tissue",
     "oral_scc": "Oral Squamous Cell Carcinoma"
 }
-description = label_descriptions.get(class_name, "Unknown class")
+
+if uploaded_file:
+    image = Image.open(uploaded_file).resize((128, 128))
+    st.image(image, caption='Uploaded Image', width='stretch')
+
+    # Preprocess
+    img_array = np.array(image) / 255.0
+    img_array = img_array.reshape(1, 128, 128, 3)
+
+    # Predict
+    pred = model.predict(img_array)
+    class_idx = np.argmax(pred)
+    class_name = list(label_map.keys())[list(label_map.values()).index(class_idx)]
+    description = label_descriptions.get(class_name, "Unknown class")
 
 st.write(f"**Raw Label:** {class_name}")
 st.write(f"**Prediction:** {description}")
