@@ -74,16 +74,16 @@ st.write(f"**Confidence:** {confidence}%")
 # import streamlit as st
 # import json
 
-if st.button("📊 Load Evaluation Results"):
-    import json
-    try:
-        with open("evaluation_results.json", "r") as f:
-            results = json.load(f)
-            test_acc = results["Test Accuracy"]
-            test_loss = results["Test Loss"]
+# if st.button("📊 Load Evaluation Results"):
+#     import json
+#     try:
+#         with open("evaluation_results.json", "r") as f:
+#             results = json.load(f)
+#             test_acc = results["Test Accuracy"]
+#             test_loss = results["Test Loss"]
 
-            st.subheader("🧪 Model Evaluation")
-            st.metric("Test Accuracy", f"{test_acc:.2%}")
-            st.metric("Test Loss", f"{test_loss:.4f}")
+#             st.subheader("🧪 Model Evaluation")
+#             st.metric("Test Accuracy", f"{test_acc:.2%}")
+#             st.metric("Test Loss", f"{test_loss:.4f}")
     except FileNotFoundError:
         st.warning("Evaluation results not found. Please run the evaluation script first.")
