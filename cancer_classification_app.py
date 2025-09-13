@@ -85,5 +85,5 @@ st.write(f"**Confidence:** {confidence}%")
 #             st.subheader("🧪 Model Evaluation")
 #             st.metric("Test Accuracy", f"{test_acc:.2%}")
 #             st.metric("Test Loss", f"{test_loss:.4f}")
-    except FileNotFoundError:
-        st.warning("Evaluation results not found. Please run the evaluation script first.")
+    # except FileNotFoundError:
+    #     st.warning("Evaluation results not found. Please run the evaluation script first.")
