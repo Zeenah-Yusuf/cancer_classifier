@@ -48,7 +48,7 @@ label_descriptions = {
 
 if uploaded_file:
     image = Image.open(uploaded_file).resize((128, 128))
-    st.image(image, caption='Uploaded Image', width='stretch')
+    st.image(image, caption='Uploaded Image', use_column_width=True)
 
     # Preprocess
     img_array = np.array(image) / 255.0
@@ -60,10 +60,10 @@ if uploaded_file:
     class_name = list(label_map.keys())[list(label_map.values()).index(class_idx)]
     description = label_descriptions.get(class_name, "Unknown class")
 
-st.write(f"**Raw Label:** {class_name}")
-st.write(f"**Prediction:** {description}")
-confidence = round(float(np.max(pred)) * 100, 2)
-st.write(f"**Confidence:** {confidence}%")
-
+    # Display results
+    st.write(f"**Raw Label:** {class_name}")
+    st.write(f"**Prediction:** {description}")
+    confidence = round(float(np.max(pred)) * 100, 2)
+    st.write(f"**Confidence:** {confidence}%")
 
 
