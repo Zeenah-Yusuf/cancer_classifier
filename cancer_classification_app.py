@@ -11,7 +11,8 @@ label_map = joblib.load('label_encoder.pkl')
 inv_label_map = {v: k for k, v in label_map.items()}
 
 # Streamlit UI
-st.title("🧬 Cancer Image Classifier")
+st.title("🧬 Oncolens - Cancer Classification")
+st.header("Cancer Image Classifier")
 st.write("Upload an image to predict the cancer type")
 
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
