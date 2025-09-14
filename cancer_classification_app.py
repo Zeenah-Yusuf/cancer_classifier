@@ -48,7 +48,7 @@ label_descriptions = {
 
 if uploaded_file:
     image = Image.open(uploaded_file).resize((128, 128))
-    st.image(image, caption='Uploaded Image', width='stretch')
+    st.image(image, caption='Uploaded Image', use_container_width = True)
 
     # Preprocess
     img_array = np.array(image) / 255.0
