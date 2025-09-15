@@ -108,10 +108,6 @@ with st.sidebar:
             "nav-link-selected": {"background-color": "#008080", "color": "white"},
         }
     )
-    # Override navigation if triggered from Home page
-if "selected_page" in st.session_state:
-    selected = st.session_state["selected_page"]
-    del st.session_state["selected_page"]
 
 # Load model and label encoder
 model = tf.keras.models.load_model('cancer_classifier_model.h5')
@@ -145,7 +141,11 @@ label_descriptions = {
     "oral_normal": "Healthy oral tissue",
     "oral_scc": "Oral Squamous Cell Carcinoma"
 } 
+# Initialize session state
+if "selected_page" not in st.session_state:
+    st.session_state["selected_page"] = "Home"
 
+selected = st.session_state["selected_page"]
 # Page: Home
 if selected == "Home":
     st.image("https://i.imgur.com/UJTEe8w.png", width=150)
@@ -159,20 +159,21 @@ if selected == "Home":
 
     st.markdown("### 🚀 Ready to explore?")
     destination = st.selectbox("Choose where to go:", ["Classifier", "Patient Info", "Compliance"])
-    if st.button("Go", key="go_button"):
+    if st.button("Go"):
         st.session_state["selected_page"] = destination
+        st.experimental_rerun()
 
-# Page: Classifier
+# ---------------------- CLASSIFIER PAGE ----------------------
 elif selected == "Classifier":
     st.header("📤 Upload Medical Image")
-    uploaded_file = st.file_uploader("Upload a medical image to begin", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("Upload a medical image", type=["jpg", "jpeg", "png"])
 
     if uploaded_file:
         image = Image.open(uploaded_file).resize((128, 128))
         st.session_state["image"] = image
         st.image(image, caption="Uploaded Image", width="stretch")
 
-    if "image" in st.session_state and st.button("🔍 Predict", key="predict_button"):
+    if "image" in st.session_state and st.button("🔍 Predict"):
         img_array = np.array(st.session_state["image"]) / 255.0
         img_array = img_array.reshape(1, 128, 128, 3)
         pred = model.predict(img_array)
@@ -216,15 +217,19 @@ elif selected == "Classifier":
             pdf_buffer.seek(0)
             st.download_button("📄 Download PDF Report", pdf_buffer, "oncolens_report.pdf", "application/pdf")
 
-        if st.button("🔄 Reset Classifier", key="reset_classifier"):
+        if st.button("🔄 Reset Classifier"):
             st.session_state.pop("image", None)
             st.session_state.pop("prediction", None)
+            st.experimental_rerun()
 
-    if "prediction" not in st.session_state:
-        if st.button("🔙 Go Back to Home", key="floating_classifier"):
+    st.markdown("---")
+    with st.form("go_back_classifier"):
+        go_back = st.form_submit_button("🔙 Go Back to Home")
+        if go_back:
             st.session_state["selected_page"] = "Home"
+            st.experimental_rerun()
 
-# Page: Patient Info
+# ---------------------- PATIENT INFO PAGE ----------------------
 elif selected == "Patient Info":
     st.header("🧑‍⚕️ Patient Metadata")
 
@@ -239,26 +244,17 @@ elif selected == "Patient Info":
             st.session_state["name"] = name
             st.session_state["age"] = age
             st.session_state["gender"] = gender
-            st.session_state["metadata_saved"] = True
             st.success(f"Metadata saved for {name}, age {age}, gender {gender}.")
 
-    if st.session_state.get("metadata_saved"):
-        if st.button("🔄 Reset Metadata", key="reset_metadata"):
-            st.session_state.pop("name", None)
-            st.session_state.pop("age", None)
-            st.session_state.pop("gender", None)
-            st.session_state.pop("metadata_saved", None)
-
-    if not st.session_state.get("metadata_saved"):
-        if st.button("🔙 Go Back to Home", key="floating_patient"):
+    with st.form("go_back_patient"):
+        go_back = st.form_submit_button("🔙 Go Back to Home")
+        if go_back:
             st.session_state["selected_page"] = "Home"
+            st.experimental_rerun()
 
-# Page: Compliance
+# ---------------------- COMPLIANCE PAGE ----------------------
 elif selected == "Compliance":
     st.header("📜 Healthcare & AI Compliance Standards")
-
-    if "compliance_viewed" not in st.session_state:
-        st.session_state["compliance_viewed"] = False
 
     with st.expander("View Full Standards"):
         st.markdown("""
@@ -273,20 +269,18 @@ elif selected == "Compliance":
         - ✅ **HIPAA & GDPR Awareness**  
           Designed with data privacy and patient confidentiality in mind.
         """)
-        st.session_state["compliance_viewed"] = True
 
     st.markdown("""
     > ⚠️ **Medical Disclaimer**  
     This tool is intended for **research and educational purposes only**. It is not a substitute for professional medical diagnosis or treatment.
     """)
 
-    if st.session_state["compliance_viewed"]:
-        if st.button("🔄 Reset Compliance View", key="reset_compliance"):
-            st.session_state["compliance_viewed"] = False
-    else:
-        if st.button("🔙 Go Back to Home", key="floating_compliance"):
+    st.markdown("---")
+    with st.form("go_back_compliance"):
+        go_back = st.form_submit_button("🔙 Go Back to Home")
+        if go_back:
             st.session_state["selected_page"] = "Home"
-
+            st.experimental_rerun()
 # Footer
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: 12px;'>© 2025 OncoLens AI | Empowering medical diagnostics through intelligent technology</p>", unsafe_allow_html=True)
