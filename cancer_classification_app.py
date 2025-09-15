@@ -1,3 +1,16 @@
+import streamlit as st
+from streamlit_option_menu import option_menu
+import tensorflow as tf
+import numpy as np
+from PIL import Image
+import joblib
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+import io
+
+# Page config
+st.set_page_config(page_title="OncoLens", page_icon="🧬", layout="wide")
+
 # Simple password gate
 def authenticate():
     st.sidebar.subheader("🔐 Login")
@@ -11,20 +24,9 @@ def authenticate():
 if not authenticate():
     st.stop()
 
+# st.image("https://imgur.com/a/tZSjx0K", width=150)
+# st.markdown("<h1 style='text-align: center;'>🧬 Oncolens Cancer Classifier</h1>", unsafe_allow_html=True)
 
-
-import streamlit as st
-from streamlit_option_menu import option_menu
-import tensorflow as tf
-import numpy as np
-from PIL import Image
-import joblib
-
-st.image("https://drive.google.com/file/d/1RaJtN2y-ee1OTCwmNGoSVfZTBV5qWaek/view?usp=sharing", width=150)
-st.markdown("<h1 style='text-align: center;'>🧬 Oncolens Cancer Classifier</h1>", unsafe_allow_html=True)
-
-# Page config
-st.set_page_config(page_title="OncoLens", page_icon="🧬", layout="wide")
 
 # Custom CSS
 st.markdown("""
@@ -41,6 +43,11 @@ st.markdown("""
 
 # Sidebar menu
 with st.sidebar:
+    st.sidebar.markdown("""
+    <div style="text-align: center;">
+        <img src="https://i.imgur.com/UJTEe8w.png" width="100" style="border: 2px solid #008080; border-radius: 8px;">
+    </div>
+""", unsafe_allow_html=True)
     selected = option_menu(
         menu_title="OncoLens Navigation",
         options=["Home", "Classifier", "Patient Info", "Compliance"],
@@ -59,11 +66,38 @@ with st.sidebar:
 model = tf.keras.models.load_model('cancer_classifier_model.h5')
 label_map = joblib.load('label_encoder.pkl')
 inv_label_map = {v: k for k, v in label_map.items()}
-label_descriptions = { ... }  # same dictionary as before
+label_descriptions = {
+     "all_benign": "Benign blood cells (non-cancerous)",
+    "all_early": "Early-stage acute lymphoblastic leukemia",
+    "all_pre": "Pre-B cell subtype of leukemia",
+    "all_pro": "Pro-B cell subtype of leukemia",
+    "brain_glioma": "Glioma (tumor from glial cells)",
+    "brain_menin": "Meningioma (tumor from meninges)",
+    "brain_tumor": "General brain tumor",
+    "breast_benign": "Benign breast tissue",
+    "breast_malignant": "Malignant breast tissue (cancerous)",
+    "cervix_dyk": "Dyskeratotic cells (abnormal keratinization)",
+    "cervix_koc": "Koilocytotic cells (HPV-related changes)",
+    "cervix_mep": "Metaplastic epithelial cells",
+    "cervix_pab": "Parabasal cells (immature squamous cells)",
+    "cervix_sfi": "Superficial squamous cells (normal)",
+    "colon_aca": "Colon adenocarcinoma (colon cancer)",
+    "colon_bnt": "Benign colon tissue",
+    "kidney_normal": "Healthy kidney tissue",
+    "kidney_tumor": "Kidney tumor (cancerous)",
+    "lung_aca": "Lung adenocarcinoma",
+    "lung_bnt": "Benign lung tissue",
+    "lung_scc": "Lung squamous cell carcinoma",
+    "lymph_cll": "Chronic lymphocytic leukemia",
+    "lymph_fl": "Follicular lymphoma",
+    "lymph_mcl": "Mantle cell lymphoma",
+    "oral_normal": "Healthy oral tissue",
+    "oral_scc": "Oral Squamous Cell Carcinoma"
+} 
 
 # Page: Home (Splash Screen)
 if selected == "Home":
-    st.image("logo.png", width=120)
+    st.image("https://i.imgur.com/UJTEe8w.png", width=150)
     st.markdown("<h1 style='text-align: center;'>Welcome to OncoLens</h1>", unsafe_allow_html=True)
     st.markdown("<h4 style='text-align: center;'>AI-Powered Cancer Image Classification</h4>", unsafe_allow_html=True)
     st.markdown("""
@@ -79,7 +113,7 @@ elif selected == "Classifier":
     uploaded_file = st.file_uploader("Upload a medical image to begin", type=["jpg", "jpeg", "png"])
     if uploaded_file:
         image = Image.open(uploaded_file).resize((128, 128))
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+        st.image(image, caption="Uploaded Image", use_container_width=True)
         img_array = np.array(image) / 255.0
         img_array = img_array.reshape(1, 128, 128, 3)
         pred = model.predict(img_array)
@@ -87,36 +121,49 @@ elif selected == "Classifier":
         class_name = list(label_map.keys())[list(label_map.values()).index(class_idx)]
         description = label_descriptions.get(class_name, "Unknown class")
         confidence = round(float(np.max(pred)) * 100, 2)
+        
         st.success(f"**Cancer Type:** {description}")
         st.info(f"**Classification Role:** `{class_name}`")
         st.metric(label="Prediction Confidence", value=f"{confidence}%")
+        
         result_text = f"Cancer Type: {description}\nRole: {class_name}\nConfidence: {confidence}%"
-        st.download_button("📥 Download Results", result_text.encode("utf-8"), "oncolens_result.txt", "text/plain")
-        from reportlab.lib.pagesizes import letter
-        from reportlab.pdfgen import canvas
-        import io
+        # Format selection
+        format_choice = st.radio("Choose download format:", ["Text (.txt)", "PDF (.pdf)"])
 
-        # Generate PDF
-        pdf_buffer = io.BytesIO()
-        c = canvas.Canvas(pdf_buffer, pagesize=letter)
-        c.setFont("Helvetica", 12)
-        c.drawString(50, 750, "OncoLens Cancer Classification Report")
-        c.drawString(50, 720, f"Cancer Type: {description}")
-        c.drawString(50, 700, f"Classification Role: {class_name}")
-        c.drawString(50, 680, f"Prediction Confidence: {confidence}%")
-        c.drawString(50, 640, "Disclaimer: This result is for research and educational use only.")
-        c.drawString(50, 760, f"Patient Name: {name}")
-        c.drawString(50, 740, f"Age: {age} | Gender: {gender}")
-        c.save()
-        pdf_buffer.seek(0)
-
-        # Download button
-        st.download_button(
-        label="📄 Download PDF Report",
-        data=pdf_buffer,
-        file_name="oncolens_report.pdf",
-        mime="application/pdf"
+        if format_choice == "Text (.txt)":
+            st.download_button(
+            label="📥 Download Results",
+            data=result_text.encode("utf-8"),
+            file_name="oncolens_result.txt",
+            mime="text/plain"
         )
+
+        elif format_choice == "PDF (.pdf)":
+            # Get patient metadata from session
+            patient_name = st.session_state.get("name", "N/A")
+            patient_age = st.session_state.get("age", "N/A")
+            patient_gender = st.session_state.get("gender", "N/A")
+
+            # Generate PDF
+            pdf_buffer = io.BytesIO()
+            c = canvas.Canvas(pdf_buffer, pagesize=letter)
+            c.setFont("Helvetica", 12)
+            c.drawString(50, 750, "OncoLens Cancer Classification Report")
+            c.drawString(50, 720, f"Patient Name: {patient_name}")
+            c.drawString(50, 700, f"Age: {patient_age} | Gender: {patient_gender}")
+            c.drawString(50, 680, f"Cancer Type: {description}")
+            c.drawString(50, 660, f"Classification Role: {class_name}")
+            c.drawString(50, 640, f"Prediction Confidence: {confidence}%")
+            c.drawString(50, 600, "Disclaimer: This result is for research and educational use only.")
+            c.save()
+            pdf_buffer.seek(0)
+
+            st.download_button(
+                label="📄 Download PDF Report",
+                data=pdf_buffer,
+                file_name="oncolens_report.pdf",
+                mime="application/pdf"
+            )
 
 # Page: Patient Info
 elif selected == "Patient Info":
@@ -128,7 +175,11 @@ elif selected == "Patient Info":
         notes = st.text_area("Clinical Notes")
         submitted = st.form_submit_button("Save Metadata")
         if submitted:
+            st.session_state["name"] = name
+            st.session_state["age"] = age
+            st.session_state["gender"] = gender
             st.success(f"Metadata saved for {name}, age {age}, gender {gender}.")
+
 
 # Page: Compliance
 elif selected == "Compliance":
@@ -155,3 +206,6 @@ elif selected == "Compliance":
 # Footer
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: 12px;'>© 2025 OncoLens AI | Empowering medical diagnostics through intelligent technology</p>", unsafe_allow_html=True)
+
+
+
