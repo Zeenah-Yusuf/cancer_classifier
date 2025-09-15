@@ -165,31 +165,27 @@ if selected == "Home":
 # Page: Classifier
 elif selected == "Classifier":
     st.header("📤 Upload Medical Image")
-
     uploaded_file = st.file_uploader("Upload a medical image to begin", type=["jpg", "jpeg", "png"])
+    
     if uploaded_file:
         image = Image.open(uploaded_file).resize((128, 128))
         st.session_state["image"] = image
-        st.image(image, caption="Uploaded Image", use_container_width=True)
+        st.image(image, caption="Uploaded Image", width="stretch")
 
-    if "image" in st.session_state:
-        if st.button("🔍 Predict", key="predict_button"):
-            img_array = np.array(st.session_state["image"]) / 255.0
-            img_array = img_array.reshape(1, 128, 128, 3)
-            pred = model.predict(img_array)
-            class_idx = np.argmax(pred)
-            class_name = list(label_map.keys())[list(label_map.values()).index(class_idx)]
-            description = label_descriptions.get(class_name, "Unknown class")
-            confidence = round(float(np.max(pred)) * 100, 2)
+    if "image" in st.session_state and st.button("🔍 Predict", key="predict_button"):
+        img_array = np.array(st.session_state["image"]) / 255.0
+        img_array = img_array.reshape(1, 128, 128, 3)
+        pred = model.predict(img_array)
+        class_idx = np.argmax(pred)
+        class_name = list(label_map.keys())[list(label_map.values()).index(class_idx)]
+        description = label_descriptions.get(class_name, "Unknown class")
+        confidence = round(float(np.max(pred)) * 100, 2)
+        st.session_state["prediction"] = {
+            "class_name": class_name,
+            "description": description,
+            "confidence": confidence
+        }
 
-            # Store results
-            st.session_state["prediction"] = {
-                "class_name": class_name,
-                "description": description,
-                "confidence": confidence
-            }
-
-    # Show prediction results if available
     if "prediction" in st.session_state:
         result = st.session_state["prediction"]
         st.success(f"**Cancer Type:** {result['description']}")
@@ -200,18 +196,12 @@ elif selected == "Classifier":
         format_choice = st.radio("Choose download format:", ["Text (.txt)", "PDF (.pdf)"])
 
         if format_choice == "Text (.txt)":
-            st.download_button(
-                label="📥 Download Results",
-                data=result_text.encode("utf-8"),
-                file_name="oncolens_result.txt",
-                mime="text/plain"
-            )
+            st.download_button("📥 Download Results", result_text.encode("utf-8"), "oncolens_result.txt", "text/plain")
 
         elif format_choice == "PDF (.pdf)":
             patient_name = st.session_state.get("name", "N/A")
             patient_age = st.session_state.get("age", "N/A")
             patient_gender = st.session_state.get("gender", "N/A")
-
             pdf_buffer = io.BytesIO()
             c = canvas.Canvas(pdf_buffer, pagesize=letter)
             c.setFont("Helvetica", 12)
@@ -224,51 +214,47 @@ elif selected == "Classifier":
             c.drawString(50, 600, "Disclaimer: This result is for research and educational use only.")
             c.save()
             pdf_buffer.seek(0)
+            st.download_button("📄 Download PDF Report", pdf_buffer, "oncolens_report.pdf", "application/pdf")
 
-            st.download_button(
-                label="📄 Download PDF Report",
-                data=pdf_buffer,
-                file_name="oncolens_report.pdf",
-                mime="application/pdf"
-            )
+        # Optional reset button
+        if st.button("🔄 Reset Classifier", key="reset_classifier"):
+            st.session_state.pop("image", None)
+            st.session_state.pop("prediction", None)
 
-    # Floating button
-    with st.form("go_back_form"):
-        st.markdown("""
-            <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
-                <style>
-                    .stButton>button {
-                        background-color: #008080;
-                        color: white;
-                        border-radius: 30px;
-                        padding: 10px 20px;
-                        box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-                    }
-                    .stButton>button:hover {
-                        background-color: #006666;
-                    }
-                </style>
-            </div>
-        """, unsafe_allow_html=True)
-        go_back = st.form_submit_button("🔙 Go Back to Home", use_container_width=True)
-        if go_back:
+    else:
+        # Show Go Back only when no prediction is active
+        if st.button("🔙 Go Back to Home", key="floating_classifier"):
             st.session_state["selected_page"] = "Home"
         
 # Page: Patient Info
 elif selected == "Patient Info":
     st.header("🧑‍⚕️ Patient Metadata")
+
+    # Patient form
     with st.form("patient_form"):
         name = st.text_input("Patient Name")
         age = st.number_input("Age", min_value=0, max_value=120)
         gender = st.selectbox("Gender", ["Female", "Male", "Other"])
         notes = st.text_area("Clinical Notes")
         submitted = st.form_submit_button("Save Metadata")
+
         if submitted:
             st.session_state["name"] = name
             st.session_state["age"] = age
             st.session_state["gender"] = gender
+            st.session_state["metadata_saved"] = True
             st.success(f"Metadata saved for {name}, age {age}, gender {gender}.")
-    with st.form("go_back_patient"):
+
+    # Optional reset button after saving
+    if st.session_state.get("metadata_saved"):
+        if st.button("🔄 Reset Metadata", key="reset_metadata"):
+            st.session_state.pop("name", None)
+            st.session_state.pop("age", None)
+            st.session_state.pop("gender", None)
+            st.session_state.pop("metadata_saved", None)
+
+    # Show Go Back only when metadata is not saved
+    if not st.session_state.get("metadata_saved"):
         st.markdown("""
             <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
                 <style>
@@ -285,13 +271,14 @@ elif selected == "Patient Info":
                 </style>
             </div>
         """, unsafe_allow_html=True)
-        go_back = st.form_submit_button("🔙 Go Back to Home", use_container_width=True)
-        if go_back:
+
+        if st.button("🔙 Go Back to Home", key="floating_patient"):
             st.session_state["selected_page"] = "Home"
 
 # Page: Compliance
 elif selected == "Compliance":
     st.header("📜 Healthcare & AI Compliance Standards")
+
     with st.expander("View Full Standards"):
         st.markdown("""
         - ✅ **FDA Guidelines Compliant**  
@@ -305,31 +292,23 @@ elif selected == "Compliance":
         - ✅ **HIPAA & GDPR Awareness**  
           Designed with data privacy and patient confidentiality in mind.
         """)
+
     st.markdown("""
     > ⚠️ **Medical Disclaimer**  
     This tool is intended for **research and educational purposes only**. It is not a substitute for professional medical diagnosis or treatment.
     """)
-    with st.form("go_back_compliance"):
-        st.markdown("""
-            <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
-                <style>
-                    .stButton>button {
-                        background-color: #008080;
-                        color: white;
-                        border-radius: 30px;
-                        padding: 10px 20px;
-                        box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-                    }
-                    .stButton>button:hover {
-                        background-color: #006666;
-                    }
-                </style>
-            </div>
-        """, unsafe_allow_html=True)
-        go_back = st.form_submit_button("🔙 Go Back to Home", use_container_width=True)
-        if go_back:
-            st.session_state["selected_page"] = "Home"
 
+    # Show Go Back button only when standards are not expanded
+    if not st.session_state.get("compliance_viewed"):
+        if st.button("🔙 Go Back to Home", key="floating_compliance"):
+            st.session_state["selected_page"] = "Home"
+    else:
+        if st.button("🔄 Reset Compliance View", key="reset_compliance"):
+            st.session_state.pop("compliance_viewed", None)
+
+    # Optional flag to track if standards were viewed
+    if st.session_state.get("selected_page") == "Compliance":
+        st.session_state["compliance_viewed"] = True
 # Footer
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: 12px;'>© 2025 OncoLens AI | Empowering medical diagnostics through intelligent technology</p>", unsafe_allow_html=True)
