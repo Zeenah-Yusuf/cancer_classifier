@@ -268,26 +268,26 @@ elif selected == "Patient Info":
             st.session_state["age"] = age
             st.session_state["gender"] = gender
             st.success(f"Metadata saved for {name}, age {age}, gender {gender}.")
-with st.form("go_back_patient"):
-    st.markdown("""
-        <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
-            <style>
-                .stButton>button {
-                    background-color: #008080;
-                    color: white;
-                    border-radius: 30px;
-                    padding: 10px 20px;
-                    box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-                }
-                .stButton>button:hover {
-                    background-color: #006666;
-                }
-            </style>
-        </div>
-    """, unsafe_allow_html=True)
-    go_back = st.form_submit_button("🔙 Go Back to Home", use_container_width=True)
-    if go_back:
-        st.session_state["selected_page"] = "Home"
+    with st.form("go_back_patient"):
+        st.markdown("""
+            <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
+                <style>
+                    .stButton>button {
+                        background-color: #008080;
+                        color: white;
+                        border-radius: 30px;
+                        padding: 10px 20px;
+                        box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+                    }
+                    .stButton>button:hover {
+                        background-color: #006666;
+                    }
+                </style>
+            </div>
+        """, unsafe_allow_html=True)
+        go_back = st.form_submit_button("🔙 Go Back to Home", use_container_width=True)
+        if go_back:
+            st.session_state["selected_page"] = "Home"
 
 # Page: Compliance
 elif selected == "Compliance":
@@ -309,26 +309,26 @@ elif selected == "Compliance":
     > ⚠️ **Medical Disclaimer**  
     This tool is intended for **research and educational purposes only**. It is not a substitute for professional medical diagnosis or treatment.
     """)
-with st.form("go_back_compliance"):
-    st.markdown("""
-        <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
-            <style>
-                .stButton>button {
-                    background-color: #008080;
-                    color: white;
-                    border-radius: 30px;
-                    padding: 10px 20px;
-                    box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-                }
-                .stButton>button:hover {
-                    background-color: #006666;
-                }
-            </style>
-        </div>
-    """, unsafe_allow_html=True)
-    go_back = st.form_submit_button("🔙 Go Back to Home", use_container_width=True)
-    if go_back:
-        st.session_state["selected_page"] = "Home"
+    with st.form("go_back_compliance"):
+        st.markdown("""
+            <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
+                <style>
+                    .stButton>button {
+                        background-color: #008080;
+                        color: white;
+                        border-radius: 30px;
+                        padding: 10px 20px;
+                        box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+                    }
+                    .stButton>button:hover {
+                        background-color: #006666;
+                    }
+                </style>
+            </div>
+        """, unsafe_allow_html=True)
+        go_back = st.form_submit_button("🔙 Go Back to Home", use_container_width=True)
+        if go_back:
+            st.session_state["selected_page"] = "Home"
 
 # Footer
 st.markdown("---")
