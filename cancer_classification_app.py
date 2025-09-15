@@ -165,13 +165,16 @@ if selected == "Home":
 # Page: Classifier
 elif selected == "Classifier":
     st.header("📤 Upload Medical Image")
-    uploaded_file = st.file_uploader("Upload a medical image to begin", type=["jpg", "jpeg", "png"])
 
+    uploaded_file = st.file_uploader("Upload a medical image to begin", type=["jpg", "jpeg", "png"])
     if uploaded_file:
         image = Image.open(uploaded_file).resize((128, 128))
+        st.session_state["image"] = image  # Store image in session
         st.image(image, caption="Uploaded Image", use_container_width=True)
 
+    if "image" in st.session_state:
         if st.button("🔍 Predict", key="predict_button"):
+            image = st.session_state["image"]
             img_array = np.array(image) / 255.0
             img_array = img_array.reshape(1, 128, 128, 3)
             pred = model.predict(img_array)
@@ -220,7 +223,7 @@ elif selected == "Classifier":
                     mime="application/pdf"
                 )
 
-    # Floating button (styled and placed outside prediction logic)
+    # Floating button
     st.markdown("""
         <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
             <style>
