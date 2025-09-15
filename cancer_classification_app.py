@@ -64,7 +64,7 @@ uploaded_file = st.file_uploader("📤 Upload Image (JPG, PNG)", type=["jpg", "j
 if uploaded_file:
     st.subheader("🔍 Image Preview")
     image = Image.open(uploaded_file).resize((128, 128))
-    st.image(image, caption="Uploaded Image", use_column_width=True)
+    st.image(image, caption="Uploaded Image", use_container_width=True)
 
     # Preprocess
     img_array = np.array(image) / 255.0
