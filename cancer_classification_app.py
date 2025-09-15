@@ -92,7 +92,7 @@ st.markdown("""
 with st.sidebar:
     st.sidebar.markdown("""
     <div style="text-align: center;">
-        <img src="https://i.imgur.com/UJTEe8w.png" width="100" style="border: 2px solid #008080; border-radius: 8px;">
+        <img src="https://i.imgur.com/UJTEe8w.png" width="200" style="border: 4px solid #008080; border-radius: 16px;">
     </div>
 """, unsafe_allow_html=True)
     selected = option_menu(
