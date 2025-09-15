@@ -176,12 +176,14 @@ elif selected == "Classifier":
         class_name = list(label_map.keys())[list(label_map.values()).index(class_idx)]
         description = label_descriptions.get(class_name, "Unknown class")
         confidence = round(float(np.max(pred)) * 100, 2)
+
         st.success(f"**Cancer Type:** {description}")
         st.info(f"**Classification Role:** `{class_name}`")
         st.metric(label="Prediction Confidence", value=f"{confidence}%")
+
         result_text = f"Cancer Type: {description}\nRole: {class_name}\nConfidence: {confidence}%"
-        
         format_choice = st.radio("Choose download format:", ["Text (.txt)", "PDF (.pdf)"])
+
         if format_choice == "Text (.txt)":
             st.download_button(
                 label="📥 Download Results",
@@ -189,6 +191,7 @@ elif selected == "Classifier":
                 file_name="oncolens_result.txt",
                 mime="text/plain"
             )
+
         elif format_choice == "PDF (.pdf)":
             patient_name = st.session_state.get("name", "N/A")
             patient_age = st.session_state.get("age", "N/A")
@@ -213,25 +216,27 @@ elif selected == "Classifier":
                 file_name="oncolens_report.pdf",
                 mime="application/pdf"
             )
-                # Floating button
-                st.markdown("""
-                    <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
-                        <style>
-                            .stButton>button {
-                                background-color: #008080;
-                                color: white;
-                                border-radius: 30px;
-                                padding: 10px 20px;
-                                box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-                            }
-                            .stButton>button:hover {
-                                background-color: #006666;
-                            }
-                        </style>
-                    </div>
-                """, unsafe_allow_html=True)
-                if st.button("🔙 Go Back to Home", key="floating_classifier"):
-                    st.session_state["selected_page"] = "Home"
+
+    # ✅ Floating button block correctly placed outside the upload logic
+    st.markdown("""
+        <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
+            <style>
+                .stButton>button {
+                    background-color: #008080;
+                    color: white;
+                    border-radius: 30px;
+                    padding: 10px 20px;
+                    box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+                }
+                .stButton>button:hover {
+                    background-color: #006666;
+                }
+            </style>
+        </div>
+    """, unsafe_allow_html=True)
+
+    if st.button("🔙 Go Back to Home", key="floating_classifier"):
+        st.session_state["selected_page"] = "Home"
 # Page: Patient Info
 elif selected == "Patient Info":
     st.header("🧑‍⚕️ Patient Metadata")
