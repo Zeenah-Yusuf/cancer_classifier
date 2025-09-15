@@ -161,7 +161,7 @@ if selected == "Home":
     destination = st.selectbox("Choose where to go:", ["Classifier", "Patient Info", "Compliance"])
     if st.button("Go"):
         st.session_state["selected_page"] = destination
-        st.experimental_rerun()
+        st.rerun()
 
 # ---------------------- CLASSIFIER PAGE ----------------------
 elif selected == "Classifier":
@@ -220,14 +220,14 @@ elif selected == "Classifier":
         if st.button("🔄 Reset Classifier"):
             st.session_state.pop("image", None)
             st.session_state.pop("prediction", None)
-            st.experimental_rerun()
+            st.rerun()
 
     st.markdown("---")
     with st.form("go_back_classifier"):
         go_back = st.form_submit_button("🔙 Go Back to Home")
         if go_back:
             st.session_state["selected_page"] = "Home"
-            st.experimental_rerun()
+            st.rerun()
 
 # ---------------------- PATIENT INFO PAGE ----------------------
 elif selected == "Patient Info":
@@ -250,7 +250,7 @@ elif selected == "Patient Info":
         go_back = st.form_submit_button("🔙 Go Back to Home")
         if go_back:
             st.session_state["selected_page"] = "Home"
-            st.experimental_rerun()
+            st.rerun()
 
 # ---------------------- COMPLIANCE PAGE ----------------------
 elif selected == "Compliance":
@@ -280,7 +280,7 @@ elif selected == "Compliance":
         go_back = st.form_submit_button("🔙 Go Back to Home")
         if go_back:
             st.session_state["selected_page"] = "Home"
-            st.experimental_rerun()
+            st.rerun()
 # Footer
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: 12px;'>© 2025 OncoLens AI | Empowering medical diagnostics through intelligent technology</p>", unsafe_allow_html=True)
