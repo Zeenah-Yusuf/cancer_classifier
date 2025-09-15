@@ -233,6 +233,7 @@ elif selected == "Classifier":
             )
 
     # Floating button
+    with st.form("go_back_form"):
     st.markdown("""
         <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
             <style>
@@ -249,8 +250,8 @@ elif selected == "Classifier":
             </style>
         </div>
     """, unsafe_allow_html=True)
-
-    if st.button("🔙 Go Back to Home", key="floating_classifier"):
+    go_back = st.form_submit_button("🔙 Go Back to Home", use_container_width=True)
+    if go_back:
         st.session_state["selected_page"] = "Home"
         
 # Page: Patient Info
@@ -267,6 +268,7 @@ elif selected == "Patient Info":
             st.session_state["age"] = age
             st.session_state["gender"] = gender
             st.success(f"Metadata saved for {name}, age {age}, gender {gender}.")
+with st.form("go_back_patient"):
     st.markdown("""
         <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
             <style>
@@ -283,8 +285,10 @@ elif selected == "Patient Info":
             </style>
         </div>
     """, unsafe_allow_html=True)
-    if st.button("🔙 Go Back to Home", key="floating_patient"):
+    go_back = st.form_submit_button("🔙 Go Back to Home", use_container_width=True)
+    if go_back:
         st.session_state["selected_page"] = "Home"
+
 # Page: Compliance
 elif selected == "Compliance":
     st.header("📜 Healthcare & AI Compliance Standards")
@@ -305,6 +309,7 @@ elif selected == "Compliance":
     > ⚠️ **Medical Disclaimer**  
     This tool is intended for **research and educational purposes only**. It is not a substitute for professional medical diagnosis or treatment.
     """)
+with st.form("go_back_compliance"):
     st.markdown("""
         <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
             <style>
@@ -321,8 +326,10 @@ elif selected == "Compliance":
             </style>
         </div>
     """, unsafe_allow_html=True)
-    if st.button("🔙 Go Back to Home", key="floating_compliance"):
+    go_back = st.form_submit_button("🔙 Go Back to Home", use_container_width=True)
+    if go_back:
         st.session_state["selected_page"] = "Home"
+
 # Footer
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: 12px;'>© 2025 OncoLens AI | Empowering medical diagnostics through intelligent technology</p>", unsafe_allow_html=True)
