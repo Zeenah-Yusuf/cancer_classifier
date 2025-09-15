@@ -40,6 +40,27 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+st.markdown("""
+    <style>
+        .floating-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #008080;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+        .floating-button:hover {
+            background-color: #006666;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 
 # Sidebar menu
 with st.sidebar:
@@ -174,6 +195,18 @@ elif selected == "Classifier":
                 file_name="oncolens_report.pdf",
                 mime="application/pdf"
             )
+            st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
+            
+            st.markdown("""
+                <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
+                    <form>
+                        <button class="floating-button" type="submit">🔙 Go Back to Home</button>
+                    </form>
+                </div>
+            """, unsafe_allow_html=True)
+
+            if st.button("Go Back to Home", key="floating"):
+                st.session_state["selected_page"] = "Home"
 
 # Page: Patient Info
 elif selected == "Patient Info":
@@ -189,6 +222,20 @@ elif selected == "Patient Info":
             st.session_state["age"] = age
             st.session_state["gender"] = gender
             st.success(f"Metadata saved for {name}, age {age}, gender {gender}.")
+            st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
+        st.markdown("""
+            <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
+                <form>
+                    <button class="floating-button" type="submit">🔙 Go Back to Home</button>
+                </form>
+            </div>
+        """, unsafe_allow_html=True)
+
+        if st.button("Go Back to Home", key="floating"):
+            st.session_state["selected_page"] = "Home"
+
+
+
 
 
 # Page: Compliance
@@ -207,6 +254,19 @@ elif selected == "Compliance":
         - ✅ **HIPAA & GDPR Awareness**  
           Designed with data privacy and patient confidentiality in mind.
         """)
+        st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
+        st.markdown("""
+            <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
+                <form>
+                    <button class="floating-button" type="submit">🔙 Go Back to Home</button>
+                </form>
+            </div>
+        """, unsafe_allow_html=True)
+
+if st.button("Go Back to Home", key="floating"):
+    st.session_state["selected_page"] = "Home"
+
+
 
     st.markdown("""
     > ⚠️ **Medical Disclaimer**  
