@@ -205,8 +205,8 @@ elif selected == "Classifier":
                 </div>
             """, unsafe_allow_html=True)
 
-            if st.button("Go Back to Home", key="floating"):
-                st.session_state["selected_page"] = "Home"
+    if st.button("Go Back to Home", key="floating"):
+        st.session_state["selected_page"] = "Home"
 
 # Page: Patient Info
 elif selected == "Patient Info":
@@ -231,8 +231,8 @@ elif selected == "Patient Info":
             </div>
         """, unsafe_allow_html=True)
 
-        if st.button("Go Back to Home", key="floating"):
-            st.session_state["selected_page"] = "Home"
+    if st.button("Go Back to Home", key="floating"):
+        st.session_state["selected_page"] = "Home"
 
 
 
