@@ -234,25 +234,25 @@ elif selected == "Classifier":
 
     # Floating button
     with st.form("go_back_form"):
-    st.markdown("""
-        <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
-            <style>
-                .stButton>button {
-                    background-color: #008080;
-                    color: white;
-                    border-radius: 30px;
-                    padding: 10px 20px;
-                    box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-                }
-                .stButton>button:hover {
-                    background-color: #006666;
-                }
-            </style>
-        </div>
-    """, unsafe_allow_html=True)
-    go_back = st.form_submit_button("🔙 Go Back to Home", use_container_width=True)
-    if go_back:
-        st.session_state["selected_page"] = "Home"
+        st.markdown("""
+            <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
+                <style>
+                    .stButton>button {
+                        background-color: #008080;
+                        color: white;
+                        border-radius: 30px;
+                        padding: 10px 20px;
+                        box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+                    }
+                    .stButton>button:hover {
+                        background-color: #006666;
+                    }
+                </style>
+            </div>
+        """, unsafe_allow_html=True)
+        go_back = st.form_submit_button("🔙 Go Back to Home", use_container_width=True)
+        if go_back:
+            st.session_state["selected_page"] = "Home"
         
 # Page: Patient Info
 elif selected == "Patient Info":
