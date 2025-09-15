@@ -166,7 +166,7 @@ if selected == "Home":
 elif selected == "Classifier":
     st.header("📤 Upload Medical Image")
     uploaded_file = st.file_uploader("Upload a medical image to begin", type=["jpg", "jpeg", "png"])
-    
+
     if uploaded_file:
         image = Image.open(uploaded_file).resize((128, 128))
         st.session_state["image"] = image
@@ -216,21 +216,18 @@ elif selected == "Classifier":
             pdf_buffer.seek(0)
             st.download_button("📄 Download PDF Report", pdf_buffer, "oncolens_report.pdf", "application/pdf")
 
-        # Optional reset button
         if st.button("🔄 Reset Classifier", key="reset_classifier"):
             st.session_state.pop("image", None)
             st.session_state.pop("prediction", None)
 
-    else:
-        # Show Go Back only when no prediction is active
+    if "prediction" not in st.session_state:
         if st.button("🔙 Go Back to Home", key="floating_classifier"):
             st.session_state["selected_page"] = "Home"
-        
+
 # Page: Patient Info
 elif selected == "Patient Info":
     st.header("🧑‍⚕️ Patient Metadata")
 
-    # Patient form
     with st.form("patient_form"):
         name = st.text_input("Patient Name")
         age = st.number_input("Age", min_value=0, max_value=120)
@@ -245,7 +242,6 @@ elif selected == "Patient Info":
             st.session_state["metadata_saved"] = True
             st.success(f"Metadata saved for {name}, age {age}, gender {gender}.")
 
-    # Optional reset button after saving
     if st.session_state.get("metadata_saved"):
         if st.button("🔄 Reset Metadata", key="reset_metadata"):
             st.session_state.pop("name", None)
@@ -253,31 +249,16 @@ elif selected == "Patient Info":
             st.session_state.pop("gender", None)
             st.session_state.pop("metadata_saved", None)
 
-    # Show Go Back only when metadata is not saved
     if not st.session_state.get("metadata_saved"):
-        st.markdown("""
-            <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
-                <style>
-                    .stButton>button {
-                        background-color: #008080;
-                        color: white;
-                        border-radius: 30px;
-                        padding: 10px 20px;
-                        box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-                    }
-                    .stButton>button:hover {
-                        background-color: #006666;
-                    }
-                </style>
-            </div>
-        """, unsafe_allow_html=True)
-
         if st.button("🔙 Go Back to Home", key="floating_patient"):
             st.session_state["selected_page"] = "Home"
 
 # Page: Compliance
 elif selected == "Compliance":
     st.header("📜 Healthcare & AI Compliance Standards")
+
+    if "compliance_viewed" not in st.session_state:
+        st.session_state["compliance_viewed"] = False
 
     with st.expander("View Full Standards"):
         st.markdown("""
@@ -292,23 +273,20 @@ elif selected == "Compliance":
         - ✅ **HIPAA & GDPR Awareness**  
           Designed with data privacy and patient confidentiality in mind.
         """)
+        st.session_state["compliance_viewed"] = True
 
     st.markdown("""
     > ⚠️ **Medical Disclaimer**  
     This tool is intended for **research and educational purposes only**. It is not a substitute for professional medical diagnosis or treatment.
     """)
 
-    # Show Go Back button only when standards are not expanded
-    if not st.session_state.get("compliance_viewed"):
+    if st.session_state["compliance_viewed"]:
+        if st.button("🔄 Reset Compliance View", key="reset_compliance"):
+            st.session_state["compliance_viewed"] = False
+    else:
         if st.button("🔙 Go Back to Home", key="floating_compliance"):
             st.session_state["selected_page"] = "Home"
-    else:
-        if st.button("🔄 Reset Compliance View", key="reset_compliance"):
-            st.session_state.pop("compliance_viewed", None)
 
-    # Optional flag to track if standards were viewed
-    if st.session_state.get("selected_page") == "Compliance":
-        st.session_state["compliance_viewed"] = True
 # Footer
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: 12px;'>© 2025 OncoLens AI | Empowering medical diagnostics through intelligent technology</p>", unsafe_allow_html=True)
