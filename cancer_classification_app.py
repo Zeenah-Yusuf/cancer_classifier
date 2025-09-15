@@ -93,30 +93,30 @@ elif selected == "Classifier":
         result_text = f"Cancer Type: {description}\nRole: {class_name}\nConfidence: {confidence}%"
         st.download_button("📥 Download Results", result_text.encode("utf-8"), "oncolens_result.txt", "text/plain")
         from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-import io
+        from reportlab.pdfgen import canvas
+        import io
 
-# Generate PDF
-pdf_buffer = io.BytesIO()
-c = canvas.Canvas(pdf_buffer, pagesize=letter)
-c.setFont("Helvetica", 12)
-c.drawString(50, 750, "OncoLens Cancer Classification Report")
-c.drawString(50, 720, f"Cancer Type: {description}")
-c.drawString(50, 700, f"Classification Role: {class_name}")
-c.drawString(50, 680, f"Prediction Confidence: {confidence}%")
-c.drawString(50, 640, "Disclaimer: This result is for research and educational use only.")
-c.drawString(50, 760, f"Patient Name: {name}")
-c.drawString(50, 740, f"Age: {age} | Gender: {gender}")
-c.save()
-pdf_buffer.seek(0)
+        # Generate PDF
+        pdf_buffer = io.BytesIO()
+        c = canvas.Canvas(pdf_buffer, pagesize=letter)
+        c.setFont("Helvetica", 12)
+        c.drawString(50, 750, "OncoLens Cancer Classification Report")
+        c.drawString(50, 720, f"Cancer Type: {description}")
+        c.drawString(50, 700, f"Classification Role: {class_name}")
+        c.drawString(50, 680, f"Prediction Confidence: {confidence}%")
+        c.drawString(50, 640, "Disclaimer: This result is for research and educational use only.")
+        c.drawString(50, 760, f"Patient Name: {name}")
+        c.drawString(50, 740, f"Age: {age} | Gender: {gender}")
+        c.save()
+        pdf_buffer.seek(0)
 
-# Download button
-st.download_button(
-    label="📄 Download PDF Report",
-    data=pdf_buffer,
-    file_name="oncolens_report.pdf",
-    mime="application/pdf"
-)
+        # Download button
+        st.download_button(
+        label="📄 Download PDF Report",
+        data=pdf_buffer,
+        file_name="oncolens_report.pdf",
+        mime="application/pdf"
+        )
 
 # Page: Patient Info
 elif selected == "Patient Info":
