@@ -61,6 +61,10 @@ with st.sidebar:
             "nav-link-selected": {"background-color": "#008080", "color": "white"},
         }
     )
+    # Override navigation if triggered from Home page
+    if "selected_page" in st.session_state:
+        selected = st.session_state["selected_page"]
+        del st.session_state["selected_page"]
 
 # Load model and label encoder
 model = tf.keras.models.load_model('cancer_classifier_model.h5')
@@ -106,6 +110,12 @@ if selected == "Home":
             <a href='#Classifier'><button style='background-color:#008080;color:white;padding:10px 20px;border:none;border-radius:5px;'>Get Started</button></a>
         </div>
     """, unsafe_allow_html=True)
+
+    st.markdown("### 🚀 Ready to explore?")
+    destination = st.selectbox("Choose where to go:", ["Classifier", "Patient Info", "Compliance"])
+    if st.button("Go"):
+        st.session_state["selected_page"] = destination
+
 
 # Page: Classifier
 elif selected == "Classifier":
