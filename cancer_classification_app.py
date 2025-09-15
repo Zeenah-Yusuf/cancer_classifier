@@ -169,13 +169,12 @@ elif selected == "Classifier":
     uploaded_file = st.file_uploader("Upload a medical image to begin", type=["jpg", "jpeg", "png"])
     if uploaded_file:
         image = Image.open(uploaded_file).resize((128, 128))
-        st.session_state["image"] = image  # Store image in session
+        st.session_state["image"] = image
         st.image(image, caption="Uploaded Image", use_container_width=True)
 
     if "image" in st.session_state:
         if st.button("🔍 Predict", key="predict_button"):
-            image = st.session_state["image"]
-            img_array = np.array(image) / 255.0
+            img_array = np.array(st.session_state["image"]) / 255.0
             img_array = img_array.reshape(1, 128, 128, 3)
             pred = model.predict(img_array)
             class_idx = np.argmax(pred)
@@ -183,45 +182,55 @@ elif selected == "Classifier":
             description = label_descriptions.get(class_name, "Unknown class")
             confidence = round(float(np.max(pred)) * 100, 2)
 
-            st.success(f"**Cancer Type:** {description}")
-            st.info(f"**Classification Role:** `{class_name}`")
-            st.metric(label="Prediction Confidence", value=f"{confidence}%")
+            # Store results
+            st.session_state["prediction"] = {
+                "class_name": class_name,
+                "description": description,
+                "confidence": confidence
+            }
 
-            result_text = f"Cancer Type: {description}\nRole: {class_name}\nConfidence: {confidence}%"
-            format_choice = st.radio("Choose download format:", ["Text (.txt)", "PDF (.pdf)"])
+    # Show prediction results if available
+    if "prediction" in st.session_state:
+        result = st.session_state["prediction"]
+        st.success(f"**Cancer Type:** {result['description']}")
+        st.info(f"**Classification Role:** `{result['class_name']}`")
+        st.metric(label="Prediction Confidence", value=f"{result['confidence']}%")
 
-            if format_choice == "Text (.txt)":
-                st.download_button(
-                    label="📥 Download Results",
-                    data=result_text.encode("utf-8"),
-                    file_name="oncolens_result.txt",
-                    mime="text/plain"
-                )
+        result_text = f"Cancer Type: {result['description']}\nRole: {result['class_name']}\nConfidence: {result['confidence']}%"
+        format_choice = st.radio("Choose download format:", ["Text (.txt)", "PDF (.pdf)"])
 
-            elif format_choice == "PDF (.pdf)":
-                patient_name = st.session_state.get("name", "N/A")
-                patient_age = st.session_state.get("age", "N/A")
-                patient_gender = st.session_state.get("gender", "N/A")
+        if format_choice == "Text (.txt)":
+            st.download_button(
+                label="📥 Download Results",
+                data=result_text.encode("utf-8"),
+                file_name="oncolens_result.txt",
+                mime="text/plain"
+            )
 
-                pdf_buffer = io.BytesIO()
-                c = canvas.Canvas(pdf_buffer, pagesize=letter)
-                c.setFont("Helvetica", 12)
-                c.drawString(50, 750, "OncoLens Cancer Classification Report")
-                c.drawString(50, 720, f"Patient Name: {patient_name}")
-                c.drawString(50, 700, f"Age: {patient_age} | Gender: {patient_gender}")
-                c.drawString(50, 680, f"Cancer Type: {description}")
-                c.drawString(50, 660, f"Classification Role: {class_name}")
-                c.drawString(50, 640, f"Prediction Confidence: {confidence}%")
-                c.drawString(50, 600, "Disclaimer: This result is for research and educational use only.")
-                c.save()
-                pdf_buffer.seek(0)
+        elif format_choice == "PDF (.pdf)":
+            patient_name = st.session_state.get("name", "N/A")
+            patient_age = st.session_state.get("age", "N/A")
+            patient_gender = st.session_state.get("gender", "N/A")
 
-                st.download_button(
-                    label="📄 Download PDF Report",
-                    data=pdf_buffer,
-                    file_name="oncolens_report.pdf",
-                    mime="application/pdf"
-                )
+            pdf_buffer = io.BytesIO()
+            c = canvas.Canvas(pdf_buffer, pagesize=letter)
+            c.setFont("Helvetica", 12)
+            c.drawString(50, 750, "OncoLens Cancer Classification Report")
+            c.drawString(50, 720, f"Patient Name: {patient_name}")
+            c.drawString(50, 700, f"Age: {patient_age} | Gender: {patient_gender}")
+            c.drawString(50, 680, f"Cancer Type: {result['description']}")
+            c.drawString(50, 660, f"Classification Role: {result['class_name']}")
+            c.drawString(50, 640, f"Prediction Confidence: {result['confidence']}%")
+            c.drawString(50, 600, "Disclaimer: This result is for research and educational use only.")
+            c.save()
+            pdf_buffer.seek(0)
+
+            st.download_button(
+                label="📄 Download PDF Report",
+                data=pdf_buffer,
+                file_name="oncolens_report.pdf",
+                mime="application/pdf"
+            )
 
     # Floating button
     st.markdown("""
