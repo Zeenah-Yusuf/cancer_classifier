@@ -146,7 +146,7 @@ label_descriptions = {
     "oral_scc": "Oral Squamous Cell Carcinoma"
 } 
 
-# Page: Home (Splash Screen)
+# Page: Home
 if selected == "Home":
     st.image("https://i.imgur.com/UJTEe8w.png", width=150)
     st.markdown("<h1 style='text-align: center;'>Welcome to OncoLens</h1>", unsafe_allow_html=True)
@@ -159,10 +159,8 @@ if selected == "Home":
 
     st.markdown("### 🚀 Ready to explore?")
     destination = st.selectbox("Choose where to go:", ["Classifier", "Patient Info", "Compliance"])
-    with st.container():
-        if st.button("Go", key="go_button"):
-            st.session_state["selected_page"] = destination
-        st.markdown('<div class="go-button"></div>', unsafe_allow_html=True)
+    if st.button("Go", key="go_button"):
+        st.session_state["selected_page"] = destination
 
 # Page: Classifier
 elif selected == "Classifier":
@@ -178,30 +176,24 @@ elif selected == "Classifier":
         class_name = list(label_map.keys())[list(label_map.values()).index(class_idx)]
         description = label_descriptions.get(class_name, "Unknown class")
         confidence = round(float(np.max(pred)) * 100, 2)
-        
         st.success(f"**Cancer Type:** {description}")
         st.info(f"**Classification Role:** `{class_name}`")
         st.metric(label="Prediction Confidence", value=f"{confidence}%")
-        
         result_text = f"Cancer Type: {description}\nRole: {class_name}\nConfidence: {confidence}%"
-        # Format selection
+        
         format_choice = st.radio("Choose download format:", ["Text (.txt)", "PDF (.pdf)"])
-
         if format_choice == "Text (.txt)":
             st.download_button(
-            label="📥 Download Results",
-            data=result_text.encode("utf-8"),
-            file_name="oncolens_result.txt",
-            mime="text/plain"
-        )
-
+                label="📥 Download Results",
+                data=result_text.encode("utf-8"),
+                file_name="oncolens_result.txt",
+                mime="text/plain"
+            )
         elif format_choice == "PDF (.pdf)":
-            # Get patient metadata from session
             patient_name = st.session_state.get("name", "N/A")
             patient_age = st.session_state.get("age", "N/A")
             patient_gender = st.session_state.get("gender", "N/A")
 
-            # Generate PDF
             pdf_buffer = io.BytesIO()
             c = canvas.Canvas(pdf_buffer, pagesize=letter)
             c.setFont("Helvetica", 12)
@@ -221,28 +213,25 @@ elif selected == "Classifier":
                 file_name="oncolens_report.pdf",
                 mime="application/pdf"
             )
-            st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
-            
-st.markdown("""
-    <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
-        <style>
-            .stButton>button {
-                background-color: #008080;
-                color: white;
-                border-radius: 30px;
-                padding: 10px 20px;
-                box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-            }
-            .stButton>button:hover {
-                background-color: #006666;
-            }
-        </style>
-    </div>
-""", unsafe_allow_html=True)
-
-if st.button("🔙 Go Back to Home", key="floating_patient"):
-    st.session_state["selected_page"] = "Home"
-
+    # Floating button
+    st.markdown("""
+        <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
+            <style>
+                .stButton>button {
+                    background-color: #008080;
+                    color: white;
+                    border-radius: 30px;
+                    padding: 10px 20px;
+                    box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+                }
+                .stButton>button:hover {
+                    background-color: #006666;
+                }
+            </style>
+        </div>
+    """, unsafe_allow_html=True)
+    if st.button("🔙 Go Back to Home", key="floating_classifier"):
+        st.session_state["selected_page"] = "Home"
 # Page: Patient Info
 elif selected == "Patient Info":
     st.header("🧑‍⚕️ Patient Metadata")
@@ -257,37 +246,24 @@ elif selected == "Patient Info":
             st.session_state["age"] = age
             st.session_state["gender"] = gender
             st.success(f"Metadata saved for {name}, age {age}, gender {gender}.")
-            st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
-        st.markdown("""
-            <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
-                <form>
-                    <button class="floating-button" type="submit">🔙 Go Back to Home</button>
-                </form>
-            </div>
-        """, unsafe_allow_html=True)
-
-if st.button("Go Back to Home", key="floating_patient"):
-        st.session_state["selected_page"] = "Home"st.markdown("""
-    <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
-        <style>
-            .stButton>button {
-                background-color: #008080;
-                color: white;
-                border-radius: 30px;
-                padding: 10px 20px;
-                box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-            }
-            .stButton>button:hover {
-                background-color: #006666;
-            }
-        </style>
-    </div>
-""", unsafe_allow_html=True)
-
-if st.button("🔙 Go Back to Home", key="floating_patient"):
-    st.session_state["selected_page"] = "Home"
-
-
+    st.markdown("""
+        <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
+            <style>
+                .stButton>button {
+                    background-color: #008080;
+                    color: white;
+                    border-radius: 30px;
+                    padding: 10px 20px;
+                    box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+                }
+                .stButton>button:hover {
+                    background-color: #006666;
+                }
+            </style>
+        </div>
+    """, unsafe_allow_html=True)
+    if st.button("🔙 Go Back to Home", key="floating_patient"):
+        st.session_state["selected_page"] = "Home"
 # Page: Compliance
 elif selected == "Compliance":
     st.header("📜 Healthcare & AI Compliance Standards")
@@ -304,33 +280,28 @@ elif selected == "Compliance":
         - ✅ **HIPAA & GDPR Awareness**  
           Designed with data privacy and patient confidentiality in mind.
         """)
-        st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
-st.markdown("""
-    <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
-        <style>
-            .stButton>button {
-                background-color: #008080;
-                color: white;
-                border-radius: 30px;
-                padding: 10px 20px;
-                box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-            }
-            .stButton>button:hover {
-                background-color: #006666;
-            }
-        </style>
-    </div>
-""", unsafe_allow_html=True)
-
-if st.button("🔙 Go Back to Home", key="floating_patient"):
-    st.session_state["selected_page"] = "Home"
-
     st.markdown("""
     > ⚠️ **Medical Disclaimer**  
     This tool is intended for **research and educational purposes only**. It is not a substitute for professional medical diagnosis or treatment.
     """)
-
+    st.markdown("""
+        <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
+            <style>
+                .stButton>button {
+                    background-color: #008080;
+                    color: white;
+                    border-radius: 30px;
+                    padding: 10px 20px;
+                    box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+                }
+                .stButton>button:hover {
+                    background-color: #006666;
+                }
+            </style>
+        </div>
+    """, unsafe_allow_html=True)
+    if st.button("🔙 Go Back to Home", key="floating_compliance"):
+        st.session_state["selected_page"] = "Home"
 # Footer
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: 12px;'>© 2025 OncoLens AI | Empowering medical diagnostics through intelligent technology</p>", unsafe_allow_html=True)
-
