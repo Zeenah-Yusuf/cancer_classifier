@@ -60,7 +60,33 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+st.markdown("""
+    <style>
+        /* Dropdown styling */
+        .stSelectbox label {
+            font-weight: bold;
+            color: #008080;
+        }
+        .stSelectbox div[data-baseweb="select"] {
+            border: 2px solid #008080;
+            border-radius: 6px;
+        }
 
+        /* Go button styling */
+        .go-button > button {
+            background-color: #008080;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .go-button > button:hover {
+            background-color: #006666;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
 # Sidebar menu
 with st.sidebar:
@@ -83,9 +109,9 @@ with st.sidebar:
         }
     )
     # Override navigation if triggered from Home page
-    if "selected_page" in st.session_state:
-        selected = st.session_state["selected_page"]
-        del st.session_state["selected_page"]
+if "selected_page" in st.session_state:
+    selected = st.session_state["selected_page"]
+    del st.session_state["selected_page"]
 
 # Load model and label encoder
 model = tf.keras.models.load_model('cancer_classifier_model.h5')
@@ -128,15 +154,15 @@ if selected == "Home":
     st.markdown("""
         <div style='text-align: center;'>
             <p>Upload medical images, analyze cancer types, and explore healthcare compliance — all in one place.</p>
-            <a href='#Classifier'><button style='background-color:#008080;color:white;padding:10px 20px;border:none;border-radius:5px;'>Get Started</button></a>
         </div>
     """, unsafe_allow_html=True)
 
     st.markdown("### 🚀 Ready to explore?")
     destination = st.selectbox("Choose where to go:", ["Classifier", "Patient Info", "Compliance"])
-    if st.button("Go"):
-        st.session_state["selected_page"] = destination
-
+    with st.container():
+        if st.button("Go", key="go_button"):
+            st.session_state["selected_page"] = destination
+        st.markdown('<div class="go-button"></div>', unsafe_allow_html=True)
 
 # Page: Classifier
 elif selected == "Classifier":
@@ -197,16 +223,25 @@ elif selected == "Classifier":
             )
             st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
             
-            st.markdown("""
-                <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
-                    <form>
-                        <button class="floating-button" type="submit">🔙 Go Back to Home</button>
-                    </form>
-                </div>
-            """, unsafe_allow_html=True)
+st.markdown("""
+    <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
+        <style>
+            .stButton>button {
+                background-color: #008080;
+                color: white;
+                border-radius: 30px;
+                padding: 10px 20px;
+                box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            }
+            .stButton>button:hover {
+                background-color: #006666;
+            }
+        </style>
+    </div>
+""", unsafe_allow_html=True)
 
-    if st.button("Go Back to Home", key="floating"):
-        st.session_state["selected_page"] = "Home"
+if st.button("🔙 Go Back to Home", key="floating_patient"):
+    st.session_state["selected_page"] = "Home"
 
 # Page: Patient Info
 elif selected == "Patient Info":
@@ -231,11 +266,26 @@ elif selected == "Patient Info":
             </div>
         """, unsafe_allow_html=True)
 
-    if st.button("Go Back to Home", key="floating"):
-        st.session_state["selected_page"] = "Home"
+if st.button("Go Back to Home", key="floating_patient"):
+        st.session_state["selected_page"] = "Home"st.markdown("""
+    <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
+        <style>
+            .stButton>button {
+                background-color: #008080;
+                color: white;
+                border-radius: 30px;
+                padding: 10px 20px;
+                box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            }
+            .stButton>button:hover {
+                background-color: #006666;
+            }
+        </style>
+    </div>
+""", unsafe_allow_html=True)
 
-
-
+if st.button("🔙 Go Back to Home", key="floating_patient"):
+    st.session_state["selected_page"] = "Home"
 
 
 # Page: Compliance
@@ -255,18 +305,25 @@ elif selected == "Compliance":
           Designed with data privacy and patient confidentiality in mind.
         """)
         st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
-        st.markdown("""
-            <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
-                <form>
-                    <button class="floating-button" type="submit">🔙 Go Back to Home</button>
-                </form>
-            </div>
-        """, unsafe_allow_html=True)
+st.markdown("""
+    <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
+        <style>
+            .stButton>button {
+                background-color: #008080;
+                color: white;
+                border-radius: 30px;
+                padding: 10px 20px;
+                box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            }
+            .stButton>button:hover {
+                background-color: #006666;
+            }
+        </style>
+    </div>
+""", unsafe_allow_html=True)
 
-if st.button("Go Back to Home", key="floating"):
+if st.button("🔙 Go Back to Home", key="floating_patient"):
     st.session_state["selected_page"] = "Home"
-
-
 
     st.markdown("""
     > ⚠️ **Medical Disclaimer**  
@@ -276,6 +333,4 @@ if st.button("Go Back to Home", key="floating"):
 # Footer
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: 12px;'>© 2025 OncoLens AI | Empowering medical diagnostics through intelligent technology</p>", unsafe_allow_html=True)
-
-
 
