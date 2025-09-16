@@ -92,7 +92,7 @@ st.markdown("""
 with st.sidebar:
     st.sidebar.markdown("""
     <div style="text-align: center;">
-        <img src="https://i.imgur.com/UJTEe8w.png" width="200" style="border: 4px solid #008080; border-radius: 16px;">
+        <img src="https://i.imgur.com/UJTEe8w.png" width="200">
     </div>
 """, unsafe_allow_html=True)
     selected = option_menu(
@@ -150,12 +150,12 @@ selected = st.session_state["selected_page"]
 if selected == "Home":
     st.markdown("""
         <div style='text-align: center; margin-top: 20px;'>
-            <img src='https://i.imgur.com/UJTEe8w.png' width='150' style='border: 2px solid #008080; border-radius: 10px;'>
-            <h2 style='font-weight: bold; color: #008080; margin-top: 10px;'>OncoLens</h2>
+            <img src='https://i.imgur.com/UJTEe8w.png' width='150'>
+            <h1 style='font-weight: bold; color: #008080; margin-top: 10px;'>Welcome to OncoLens</h1>
+            <p style='font-style: italic; color: #555;'>Empowering diagnostics through intelligent technology</p>
         </div>
     """, unsafe_allow_html=True)
-    st.image("https://i.imgur.com/UJTEe8w.png", width=150)
-    st.markdown("<h1 style='text-align: center;'>Welcome to OncoLens</h1>", unsafe_allow_html=True)
+    # st.markdown("<h1 style='text-align: center;'>Welcome to OncoLens</h1>", unsafe_allow_html=True)
     st.markdown("<h4 style='text-align: center;'>AI-Powered Cancer Image Classification</h4>", unsafe_allow_html=True)
     st.markdown("""
         <div style='text-align: center;'>
