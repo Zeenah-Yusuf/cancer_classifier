@@ -93,6 +93,7 @@ with st.sidebar:
     st.sidebar.markdown("""
     <div style="text-align: center;">
         <img src="https://i.imgur.com/UJTEe8w.png" width="200">
+        <p style='font-style: italic; color: #555; margin-top: 3px;'>Empowering diagnostics through intelligent technology</p>
     </div>
 """, unsafe_allow_html=True)
     selected = option_menu(
@@ -150,9 +151,9 @@ selected = st.session_state["selected_page"]
 if selected == "Home":
     st.markdown("""
         <div style='text-align: center; margin-top: 20px;'>
-            <img src='https://i.imgur.com/UJTEe8w.png' width='150'>
+            <img src='https://i.imgur.com/UJTEe8w.png' width='400'>
+            <p style='font-style: italic; color: #555; margin-top: 8px;'>Empowering diagnostics through intelligent technology</p>
             <h1 style='font-weight: bold; color: #008080; margin-top: 10px;'>Welcome to OncoLens</h1>
-            <p style='font-style: italic; color: #555;'>Empowering diagnostics through intelligent technology</p>
         </div>
     """, unsafe_allow_html=True)
     # st.markdown("<h1 style='text-align: center;'>Welcome to OncoLens</h1>", unsafe_allow_html=True)
