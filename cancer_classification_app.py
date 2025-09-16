@@ -148,6 +148,12 @@ if "selected_page" not in st.session_state:
 selected = st.session_state["selected_page"]
 # Page: Home
 if selected == "Home":
+    st.markdown("""
+        <div style='text-align: center; margin-top: 20px;'>
+            <img src='https://i.imgur.com/UJTEe8w.png' width='150' style='border: 2px solid #008080; border-radius: 10px;'>
+            <h2 style='font-weight: bold; color: #008080; margin-top: 10px;'>OncoLens</h2>
+        </div>
+    """, unsafe_allow_html=True)
     st.image("https://i.imgur.com/UJTEe8w.png", width=150)
     st.markdown("<h1 style='text-align: center;'>Welcome to OncoLens</h1>", unsafe_allow_html=True)
     st.markdown("<h4 style='text-align: center;'>AI-Powered Cancer Image Classification</h4>", unsafe_allow_html=True)
